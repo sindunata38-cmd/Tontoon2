@@ -1,0 +1,2323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TONTOON - Streaming Film Terlengkap</title>
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" id="app-manifest">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Font Google: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-bg: #2E073F;
+            --primary-nav: #7A1CAC;
+            --accent-hover: #AD49E1;
+            --text-color: #EBD3F8;
+            --card-bg: rgba(122, 28, 172, 0.2);
+            --glass-bg: rgba(122, 28, 172, 0.15);
+            --dark-overlay: rgba(46, 7, 63, 0.85);
+        }
+        
+        [data-theme="light"] {
+            --primary-bg: #f8f9fa;
+            --primary-nav: #7A1CAC;
+            --accent-hover: #AD49E1;
+            --text-color: #2E073F;
+            --card-bg: rgba(235, 211, 248, 0.5);
+            --glass-bg: rgba(122, 28, 172, 0.1);
+            --dark-overlay: rgba(248, 249, 250, 0.95);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Glassmorphism Effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Navbar */
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--text-color) !important;
+        }
+        
+        .nav-link {
+            color: var(--text-color) !important;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-hover) !important;
+        }
+        
+        /* Bottom Navigation untuk mobile */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            display: none;
+            padding: 0.8rem 0;
+        }
+        
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .bottom-nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .bottom-nav-item.active {
+            color: var(--accent-hover);
+        }
+        
+        /* Movie Cards */
+        .movie-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            aspect-ratio: 2/3;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .movie-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .movie-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            padding: 1rem;
+            color: white;
+        }
+        
+        .movie-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .movie-meta {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Carousel Trending */
+        .carousel-trending {
+            height: 400px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .carousel-item {
+            height: 400px;
+            position: relative;
+        }
+        
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(46, 7, 63, 0.95), transparent);
+            padding: 2rem;
+        }
+        
+        .carousel-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .carousel-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .carousel-rating {
+            background-color: var(--accent-hover);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .carousel-year {
+            font-size: 1.2rem;
+        }
+        
+        .carousel-genres {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        
+        .carousel-genre {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+            z-index: 10;
+        }
+        
+        .carousel-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .carousel-btn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .carousel-indicators-custom {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .carousel-indicator.active {
+            background-color: var(--accent-hover);
+            transform: scale(1.2);
+        }
+        
+        /* Skeleton Loading */
+        .skeleton {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            animation: pulse 1.5s infinite ease-in-out;
+            aspect-ratio: 2/3;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        /* Custom Video Player */
+        .video-player-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .video-player-container:hover .video-controls {
+            transform: translateY(0);
+        }
+        
+        /* Shared Element Transition */
+        .shared-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Scrollbars */
+        .horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 0.5rem 0;
+            gap: 1rem;
+        }
+        
+        .horizontal-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .horizontal-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--accent-hover);
+            border-radius: 3px;
+        }
+        
+        /* Forms */
+        .auth-form {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+        }
+        
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-hover);
+            color: var(--text-color);
+            box-shadow: 0 0 0 0.25rem rgba(173, 73, 225, 0.25);
+        }
+        
+        /* Utility Classes */
+        .page-transition {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .back-button {
+            background-color: var(--accent-hover);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .back-button:hover {
+            background-color: var(--primary-nav);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: flex;
+                justify-content: space-around;
+            }
+            
+            .navbar-nav {
+                display: none;
+            }
+            
+            .movie-card {
+                min-width: 150px;
+            }
+            
+            .carousel-trending {
+                height: 300px;
+            }
+            
+            .carousel-item {
+                height: 300px;
+            }
+            
+            .carousel-overlay {
+                padding: 1.5rem;
+            }
+            
+            .carousel-title {
+                font-size: 1.8rem;
+            }
+            
+            .carousel-info {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .auth-form {
+                padding: 1.5rem;
+            }
+            
+            .carousel-trending {
+                height: 250px;
+            }
+            
+            .carousel-item {
+                height: 250px;
+            }
+            
+            .carousel-overlay {
+                padding: 1rem;
+            }
+            
+            .carousel-title {
+                font-size: 1.5rem;
+            }
+            
+            .carousel-info {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Aplikasi Container -->
+    <div id="app">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg glass fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#" onclick="loadPage('home')">TONTOON</a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="loadPage('home')"><i class="fas fa-home me-1"></i> Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="loadPage('search')"><i class="fas fa-search me-1"></i> Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="loadPage('watchlist')"><i class="fas fa-bookmark me-1"></i> Watchlist</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="loadPage('history')"><i class="fas fa-history me-1"></i> History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="loadPage('profile')"><i class="fas fa-user me-1"></i> Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-link nav-link" id="theme-toggle">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="container-fluid mt-5 pt-4 pb-5" id="main-content">
+            <!-- Konten akan dimuat secara dinamis di sini -->
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Memuat aplikasi...</p>
+            </div>
+        </main>
+        
+        <!-- Bottom Navigation untuk Mobile -->
+        <div class="bottom-nav">
+            <a href="#" class="bottom-nav-item active" onclick="loadPage('home'); setActiveNav(this)">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#" class="bottom-nav-item" onclick="loadPage('search'); setActiveNav(this)">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </a>
+            <a href="#" class="bottom-nav-item" onclick="loadPage('watchlist'); setActiveNav(this)">
+                <i class="fas fa-bookmark"></i>
+                <span>Watchlist</span>
+            </a>
+            <a href="#" class="bottom-nav-item" onclick="loadPage('profile'); setActiveNav(this)">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content glass border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Login ke TONTOON</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember Me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <p>Belum punya akun? <a href="#" onclick="showRegister()">Register</a></p>
+                            <p><a href="#" onclick="showForgotPassword()">Lupa Password?</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Register -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content glass border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Buat Akun TONTOON</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="registerName" class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="registerName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="registerEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" minlength="6" required>
+                            <div class="form-text">Password minimal 6 karakter</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerConfirmPassword" class="form-label">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="registerConfirmPassword" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <p>Sudah punya akun? <a href="#" onclick="showLogin()">Login</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal untuk Forgot Password -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content glass border-0">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotPasswordForm">
+                        <div class="mb-3">
+                            <label for="forgotEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="forgotEmail" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Kirim Link Reset</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <p><a href="#" onclick="showLogin()">Kembali ke Login</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Aplikasi JavaScript -->
+    <script>
+        // ==================== KONFIGURASI PWA ====================
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+        
+        // Web App Manifest
+        const manifest = {
+            "name": "TONTOON",
+            "short_name": "TONTOON",
+            "description": "Aplikasi streaming film terlengkap dan terbaru",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#2E073F",
+            "theme_color": "#7A1CAC",
+            "icons": [
+                {
+                    "src": "https://via.placeholder.com/192x192/7A1CAC/FFFFFF?text=T",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "https://via.placeholder.com/512x512/7A1CAC/FFFFFF?text=T",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+        
+        // Set manifest
+        document.getElementById('app-manifest').setAttribute('href', 'data:application/json,' + encodeURIComponent(JSON.stringify(manifest)));
+        
+        // ==================== SISTEM AUTHENTIKASI ====================
+        // Hash password sederhana
+        function simpleHash(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16);
+        }
+        
+        // Inisialisasi data user di localStorage
+        function initUsers() {
+            if (!localStorage.getItem('tontoon_users')) {
+                // Buat user default untuk testing
+                const defaultUsers = [
+                    {
+                        id: 1,
+                        name: "User Demo",
+                        email: "demo@tontoon.com",
+                        password: simpleHash("demo123"), // password: demo123
+                        joinDate: new Date().toISOString(),
+                        watchlist: [],
+                        history: [],
+                        preferences: {
+                            theme: "dark",
+                            autoPlay: true,
+                            quality: "720p"
+                        }
+                    }
+                ];
+                localStorage.setItem('tontoon_users', JSON.stringify(defaultUsers));
+            }
+            
+            // Inisialisasi session
+            if (!localStorage.getItem('tontoon_session')) {
+                localStorage.setItem('tontoon_session', JSON.stringify({}));
+            }
+        }
+        
+        // Fungsi untuk mendapatkan user dari localStorage
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('tontoon_users')) || [];
+        }
+        
+        // Fungsi untuk menyimpan user ke localStorage
+        function saveUsers(users) {
+            localStorage.setItem('tontoon_users', JSON.stringify(users));
+        }
+        
+        // Fungsi untuk mendapatkan session aktif
+        function getSession() {
+            return JSON.parse(localStorage.getItem('tontoon_session'));
+        }
+        
+        // Fungsi untuk menyimpan session
+        function saveSession(user) {
+            const session = {
+                userId: user.id,
+                email: user.email,
+                name: user.name,
+                loggedInAt: new Date().toISOString()
+            };
+            localStorage.setItem('tontoon_session', JSON.stringify(session));
+        }
+        
+        // Fungsi untuk logout
+        function logout() {
+            localStorage.setItem('tontoon_session', JSON.stringify({}));
+            showLoginModal();
+            loadPage('home');
+        }
+        
+        // Fungsi untuk cek apakah user sudah login
+        function isLoggedIn() {
+            const session = getSession();
+            return session && session.userId;
+        }
+        
+        // ==================== DATA FILM ====================
+        // Daftar film yang tersedia
+        const movies = [
+            { id: 1, title: "Avengers", year: 2012, rating: 8.0, genre: ["Action", "Adventure", "Sci-Fi"], duration: "143 min", poster: "assets/avanger.jpg", banner: "assets/avanger.jpg" },
+            { id: 2, title: "Avengers End Game", year: 2019, rating: 8.4, genre: ["Action", "Adventure", "Drama"], duration: "181 min", poster: "assets/Avangers End Game (2019).jpg", banner: "assets/Avangers End Game (2019).jpg" },
+            { id: 3, title: "Avengers Infinity War", year: 2018, rating: 8.4, genre: ["Action", "Adventure", "Sci-Fi"], duration: "149 min", poster: "assets/Avangers infinity war.jpg", banner: "assets/Avangers infinity war.jpg" },
+            { id: 4, title: "Badlands", year: 2024, rating: 7.2, genre: ["Action", "Thriller"], duration: "115 min", poster: "assets/badlands.jpg", banner: "assets/badlands.jpg" },
+            { id: 5, title: "Battle of the Gods", year: 2023, rating: 7.5, genre: ["Action", "Fantasy"], duration: "128 min", poster: "assets/Battle of the Gods.jpg", banner: "assets/Battle of the Gods.jpg" },
+            { id: 6, title: "Beekeeper", year: 2024, rating: 6.7, genre: ["Action", "Thriller"], duration: "105 min", poster: "assets/beekeeper.jpg", banner: "assets/beekeeper.jpg" },
+            { id: 7, title: "Black Adam", year: 2022, rating: 6.3, genre: ["Action", "Adventure", "Fantasy"], duration: "125 min", poster: "assets/black adam .jpg", banner: "assets/black adam .jpg" },
+            { id: 8, title: "Blade Runner 2049", year: 2017, rating: 8.0, genre: ["Drama", "Mystery", "Sci-Fi"], duration: "164 min", poster: "assets/Blade Runner 2049.jpg", banner: "assets/Blade Runner 2049.jpg" },
+            { id: 9, title: "Bullet Train", year: 2022, rating: 7.3, genre: ["Action", "Comedy", "Thriller"], duration: "127 min", poster: "assets/Bullet Train.jpg", banner: "assets/Bullet Train.jpg" },
+            { id: 10, title: "CAPTAIN MARVEL", year: 2019, rating: 6.8, genre: ["Action", "Adventure", "Sci-Fi"], duration: "123 min", poster: "assets/CAPTAIN MARVEL.jpg", banner: "assets/CAPTAIN MARVEL.jpg" },
+            { id: 11, title: "DUNE part two", year: 2024, rating: 8.7, genre: ["Action", "Adventure", "Drama"], duration: "166 min", poster: "assets/DUNE part two.jpg", banner: "assets/DUNE part two.jpg" },
+            { id: 12, title: "Extraction", year: 2020, rating: 6.7, genre: ["Action", "Thriller"], duration: "117 min", poster: "assets/Extraction.jpg", banner: "assets/Extraction.jpg" },
+            { id: 13, title: "Fast X", year: 2023, rating: 5.8, genre: ["Action", "Adventure", "Crime"], duration: "141 min", poster: "assets/Fast X.jpg", banner: "assets/Fast X.jpg" },
+            { id: 14, title: "Furiosa A MAD MAX SAGA", year: 2024, rating: 8.1, genre: ["Action", "Adventure", "Sci-Fi"], duration: "148 min", poster: "assets/Furiosa A MAD MAX SAGA.jpg", banner: "assets/Furiosa A MAD MAX SAGA.jpg" },
+            { id: 15, title: "G.I Joe 4 Ever Vigilant", year: 2024, rating: 6.5, genre: ["Action", "Adventure", "Sci-Fi"], duration: "120 min", poster: "assets/G.I Joe 4 Ever Vigilant.jpg", banner: "assets/G.I Joe 4 Ever Vigilant.jpg" },
+            { id: 16, title: "HOBBS & SHAW", year: 2019, rating: 6.5, genre: ["Action", "Adventure", "Thriller"], duration: "137 min", poster: "assets/HOBBS & SHAW.jpg", banner: "assets/HOBBS & SHAW.jpg" },
+            { id: 17, title: "Jhon Wick Chapter 4", year: 2023, rating: 7.7, genre: ["Action", "Crime", "Thriller"], duration: "169 min", poster: "assets/Jhon Wick Chapter 5.jpg", banner: "assets/Jhon Wick Chapter 5.jpg" },
+            { id: 18, title: "Mission Impossible - Dead Reckoning Part 1", year: 2023, rating: 7.7, genre: ["Action", "Adventure", "Thriller"], duration: "163 min", poster: "assets/Mission Impossible – Dead Reckoning Part One.jpg", banner: "assets/Mission Impossible – Dead Reckoning Part One.jpg" },
+            { id: 19, title: "The Batman", year: 2022, rating: 7.8, genre: ["Action", "Crime", "Drama"], duration: "176 min", poster: "assets/The Batman (2022).jpg", banner: "assets/The Batman (2022).jpg" },
+            { id: 20, title: "Wonder Woman", year: 2017, rating: 7.4, genre: ["Action", "Adventure", "Fantasy"], duration: "141 min", poster: "assets/Wonder Woman.jpg", banner: "assets/Wonder Woman.jpg" }
+        ];
+        
+        // ==================== FUNGSI UTILITAS ====================
+        // Set active nav untuk bottom navigation
+        function setActiveNav(clickedElement) {
+            const navItems = document.querySelectorAll('.bottom-nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            clickedElement.classList.add('active');
+        }
+        
+        // Toggle tema gelap/terang
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('tontoon_theme', newTheme);
+            
+            // Update icon tema
+            const themeIcon = document.querySelector('#theme-toggle i');
+            themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+        
+        // Load tema dari localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('tontoon_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Update icon tema
+            const themeIcon = document.querySelector('#theme-toggle i');
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+        
+        // Format rating
+        function formatRating(rating) {
+            return rating.toFixed(1);
+        }
+        
+        // Generate elemen movie card
+        function generateMovieCard(movie) {
+            return `
+                <div class="movie-card shared-transition" onclick="showMovieDetail(${movie.id})">
+                    <img src="${movie.poster}" alt="${movie.title}" loading="lazy">
+                    <div class="movie-overlay">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-meta">
+                            <span>${movie.year}</span> • 
+                            <span><i class="fas fa-star text-warning"></i> ${formatRating(movie.rating)}</span> • 
+                            <span>${movie.genre[0]}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==================== FUNGSI MODAL ====================
+        let loginModal, registerModal, forgotPasswordModal;
+        
+        // Inisialisasi modal
+        function initModals() {
+            loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+        }
+        
+        // Tampilkan modal login
+        function showLoginModal() {
+            loginModal.show();
+        }
+        
+        // Tampilkan modal register
+        function showRegisterModal() {
+            registerModal.show();
+        }
+        
+        // Tampilkan modal forgot password
+        function showForgotPasswordModal() {
+            forgotPasswordModal.show();
+        }
+        
+        // Switch ke modal login
+        function showLogin() {
+            registerModal.hide();
+            forgotPasswordModal.hide();
+            loginModal.show();
+        }
+        
+        // Switch ke modal register
+        function showRegister() {
+            loginModal.hide();
+            forgotPasswordModal.hide();
+            registerModal.show();
+        }
+        
+        // Switch ke modal forgot password
+        function showForgotPassword() {
+            loginModal.hide();
+            registerModal.hide();
+            forgotPasswordModal.show();
+        }
+        
+        // ==================== FUNGSI HALAMAN ====================
+        // Halaman saat ini
+        let currentPage = 'home';
+        let pageHistory = [];
+        let carouselInterval;
+        
+        // Fungsi untuk memuat halaman
+        function loadPage(page, pushToHistory = true) {
+            // Jika belum login, tampilkan modal login kecuali untuk halaman home
+            if (!isLoggedIn() && page !== 'home') {
+                showLoginModal();
+                return;
+            }
+            
+            // Simpan halaman sebelumnya ke history jika diperlukan
+            if (pushToHistory && currentPage !== page) {
+                pageHistory.push(currentPage);
+            }
+            
+            currentPage = page;
+            
+            // Sembunyikan semua modal
+            if (loginModal) loginModal.hide();
+            if (registerModal) registerModal.hide();
+            if (forgotPasswordModal) forgotPasswordModal.hide();
+            
+            // Clear carousel interval jika ada
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+            }
+            
+            // Tampilkan loading
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-3">Memuat halaman...</p></div>';
+            
+            // Set timeout untuk simulasi loading
+            setTimeout(() => {
+                // Muat konten halaman berdasarkan page
+                let content = '';
+                
+                switch(page) {
+                    case 'home':
+                        content = loadHomePage();
+                        break;
+                    case 'search':
+                        content = loadSearchPage();
+                        break;
+                    case 'watchlist':
+                        content = loadWatchlistPage();
+                        break;
+                    case 'history':
+                        content = loadHistoryPage();
+                        break;
+                    case 'profile':
+                        content = loadProfilePage();
+                        break;
+                    case 'movie-detail':
+                        content = loadMovieDetailPage();
+                        break;
+                    default:
+                        content = loadHomePage();
+                }
+                
+                // Tambahkan animasi transisi
+                mainContent.className = 'container-fluid mt-5 pt-4 pb-5 page-transition';
+                mainContent.innerHTML = content;
+                
+                // Update bottom navigation
+                updateBottomNav(page);
+                
+                // Jika ada back button, tambahkan event listener
+                const backBtn = document.querySelector('.back-button');
+                if (backBtn) {
+                    backBtn.addEventListener('click', goBack);
+                }
+                
+                // Jika halaman home, inisialisasi carousel
+                if (page === 'home') {
+                    initCarousel();
+                }
+            }, 300);
+        }
+        
+        // Fungsi untuk kembali ke halaman sebelumnya
+        function goBack() {
+            if (pageHistory.length > 0) {
+                const prevPage = pageHistory.pop();
+                loadPage(prevPage, false);
+            } else {
+                loadPage('home', false);
+            }
+        }
+        
+        // Update bottom navigation
+        function updateBottomNav(page) {
+            const navItems = document.querySelectorAll('.bottom-nav-item');
+            navItems.forEach(item => {
+                const icon = item.querySelector('i').className;
+                if (icon.includes('home') && page === 'home') {
+                    item.classList.add('active');
+                } else if (icon.includes('search') && page === 'search') {
+                    item.classList.add('active');
+                } else if (icon.includes('bookmark') && page === 'watchlist') {
+                    item.classList.add('active');
+                } else if (icon.includes('user') && page === 'profile') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+        
+        // ==================== HALAMAN HOME ====================
+        function loadHomePage() {
+            const session = getSession();
+            const userName = session.name || 'Pengguna';
+            
+            // Ambil film trending (rating tertinggi) untuk carousel
+            const trendingMovies = [...movies].sort((a, b) => b.rating - a.rating).slice(0, 5);
+            
+            // Ambil film terbaru (5 film pertama)
+            const newReleases = movies.slice(0, 8);
+            
+            // Ambil film dengan rating tertinggi
+            const topRatedMovies = [...movies].sort((a, b) => b.rating - a.rating).slice(0, 8);
+            
+            // Ambil film aksi
+            const actionMovies = movies.filter(movie => movie.genre.includes('Action')).slice(0, 8);
+            
+            // Ambil film sci-fi
+            const scifiMovies = movies.filter(movie => movie.genre.includes('Sci-Fi')).slice(0, 8);
+            
+            return `
+                <div class="container">
+                    <!-- Header dengan sapaan -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h2 class="fw-bold">Selamat datang, ${userName}</h2>
+                            <p class="text-muted">Nikmati film terbaru dan terlengkap hanya di TONTOON</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Carousel Film Trending -->
+                    <div class="row mb-5">
+                        <div class="col">
+                            <h4 class="mb-3">🔥 Trending Now</h4>
+                            <div class="carousel-trending">
+                                ${trendingMovies.map((movie, index) => `
+                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                        <img src="${movie.banner}" class="carousel-image" alt="${movie.title}">
+                                        <div class="carousel-overlay">
+                                            <h2 class="carousel-title">${movie.title}</h2>
+                                            <div class="carousel-info">
+                                                <div class="carousel-rating">
+                                                    <i class="fas fa-star me-1"></i> ${formatRating(movie.rating)}
+                                                </div>
+                                                <div class="carousel-year">${movie.year}</div>
+                                                <div class="carousel-duration">${movie.duration}</div>
+                                            </div>
+                                            <div class="carousel-genres">
+                                                ${movie.genre.map(g => `<span class="carousel-genre">${g}</span>`).join('')}
+                                            </div>
+                                            <div class="d-flex gap-3">
+                                                <button class="btn btn-primary btn-lg" onclick="playMovie(${movie.id})">
+                                                    <i class="fas fa-play me-2"></i> Putar Sekarang
+                                                </button>
+                                                <button class="btn btn-outline-light btn-lg" onclick="showMovieDetail(${movie.id})">
+                                                    <i class="fas fa-info-circle me-2"></i> Detail
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                                
+                                <!-- Carousel Controls -->
+                                <div class="carousel-controls">
+                                    <button class="carousel-btn" onclick="prevCarousel()">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="carousel-btn" onclick="nextCarousel()">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Carousel Indicators -->
+                                <div class="carousel-indicators-custom">
+                                    ${trendingMovies.map((_, index) => `
+                                        <div class="carousel-indicator ${index === 0 ? 'active' : ''}" onclick="goToCarousel(${index})"></div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Film Terbaru -->
+                    <div class="row mb-5">
+                        <div class="col">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4>🎬 Rilisan Terbaru</h4>
+                                <a href="#" class="text-primary" onclick="loadPage('search')">Lihat Semua</a>
+                            </div>
+                            <div class="horizontal-scroll">
+                                ${newReleases.map(movie => generateMovieCard(movie)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Film dengan Rating Tertinggi -->
+                    <div class="row mb-5">
+                        <div class="col">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4>⭐ Rating Tertinggi</h4>
+                                <a href="#" class="text-primary" onclick="loadPage('search')">Lihat Semua</a>
+                            </div>
+                            <div class="horizontal-scroll">
+                                ${topRatedMovies.map(movie => generateMovieCard(movie)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Film Aksi -->
+                    <div class="row mb-5">
+                        <div class="col">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4>💥 Film Aksi</h4>
+                                <a href="#" class="text-primary" onclick="loadPage('search')">Lihat Semua</a>
+                            </div>
+                            <div class="horizontal-scroll">
+                                ${actionMovies.map(movie => generateMovieCard(movie)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Film Sci-Fi -->
+                    <div class="row mb-5">
+                        <div class="col">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4>🚀 Film Sci-Fi</h4>
+                                <a href="#" class="text-primary" onclick="loadPage('search')">Lihat Semua</a>
+                            </div>
+                            <div class="horizontal-scroll">
+                                ${scifiMovies.map(movie => generateMovieCard(movie)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Spacer untuk bottom navigation -->
+                    <div class="mb-5"></div>
+                </div>
+            `;
+        }
+        
+        // ==================== FUNGSI CAROUSEL ====================
+        let currentCarouselIndex = 0;
+        let carouselItems = [];
+        
+        function initCarousel() {
+            carouselItems = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            
+            // Reset semua item dan indicators
+            carouselItems.forEach(item => item.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            // Set item pertama sebagai active
+            if (carouselItems.length > 0) {
+                carouselItems[0].classList.add('active');
+                indicators[0].classList.add('active');
+                currentCarouselIndex = 0;
+            }
+            
+            // Auto slide setiap 5 detik
+            carouselInterval = setInterval(nextCarousel, 5000);
+            
+            // Tambahkan event listeners untuk swipe di mobile
+            const carousel = document.querySelector('.carousel-trending');
+            if (carousel) {
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                carousel.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+                
+                carousel.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                });
+                
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    const diff = touchStartX - touchEndX;
+                    
+                    if (Math.abs(diff) > swipeThreshold) {
+                        if (diff > 0) {
+                            // Swipe kiri, next carousel
+                            nextCarousel();
+                        } else {
+                            // Swipe kanan, prev carousel
+                            prevCarousel();
+                        }
+                    }
+                }
+            }
+        }
+        
+        function nextCarousel() {
+            if (carouselItems.length === 0) return;
+            
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            
+            // Sembunyikan item saat ini
+            carouselItems[currentCarouselIndex].classList.remove('active');
+            indicators[currentCarouselIndex].classList.remove('active');
+            
+            // Hitung index berikutnya
+            currentCarouselIndex = (currentCarouselIndex + 1) % carouselItems.length;
+            
+            // Tampilkan item berikutnya
+            carouselItems[currentCarouselIndex].classList.add('active');
+            indicators[currentCarouselIndex].classList.add('active');
+            
+            // Reset interval
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+                carouselInterval = setInterval(nextCarousel, 5000);
+            }
+        }
+        
+        function prevCarousel() {
+            if (carouselItems.length === 0) return;
+            
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            
+            // Sembunyikan item saat ini
+            carouselItems[currentCarouselIndex].classList.remove('active');
+            indicators[currentCarouselIndex].classList.remove('active');
+            
+            // Hitung index sebelumnya
+            currentCarouselIndex = (currentCarouselIndex - 1 + carouselItems.length) % carouselItems.length;
+            
+            // Tampilkan item sebelumnya
+            carouselItems[currentCarouselIndex].classList.add('active');
+            indicators[currentCarouselIndex].classList.add('active');
+            
+            // Reset interval
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+                carouselInterval = setInterval(nextCarousel, 5000);
+            }
+        }
+        
+        function goToCarousel(index) {
+            if (carouselItems.length === 0 || index < 0 || index >= carouselItems.length) return;
+            
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            
+            // Sembunyikan item saat ini
+            carouselItems[currentCarouselIndex].classList.remove('active');
+            indicators[currentCarouselIndex].classList.remove('active');
+            
+            // Set index baru
+            currentCarouselIndex = index;
+            
+            // Tampilkan item yang dipilih
+            carouselItems[currentCarouselIndex].classList.add('active');
+            indicators[currentCarouselIndex].classList.add('active');
+            
+            // Reset interval
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+                carouselInterval = setInterval(nextCarousel, 5000);
+            }
+        }
+        
+        // ==================== HALAMAN SEARCH ====================
+        function loadSearchPage() {
+            return `
+                <div class="container">
+                    <!-- Back Button -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <button class="back-button">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Header Search -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h2 class="fw-bold">Cari Film</h2>
+                            <p class="text-muted">Temukan film favorit Anda</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Cari berdasarkan judul, aktor, atau sutradara...">
+                                <button class="btn btn-primary" type="button" onclick="performSearch()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h5>Filter</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <select class="form-select form-select-sm" id="genreFilter" style="width: auto;">
+                                    <option value="">Semua Genre</option>
+                                    <option value="Action">Action</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Sci-Fi">Sci-Fi</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Thriller">Thriller</option>
+                                    <option value="Fantasy">Fantasy</option>
+                                    <option value="Comedy">Comedy</option>
+                                    <option value="Crime">Crime</option>
+                                </select>
+                                
+                                <select class="form-select form-select-sm" id="yearFilter" style="width: auto;">
+                                    <option value="">Semua Tahun</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                </select>
+                                
+                                <select class="form-select form-select-sm" id="ratingFilter" style="width: auto;">
+                                    <option value="">Semua Rating</option>
+                                    <option value="9">9+</option>
+                                    <option value="8">8+</option>
+                                    <option value="7">7+</option>
+                                    <option value="6">6+</option>
+                                </select>
+                                
+                                <button class="btn btn-sm btn-outline-primary" onclick="applyFilters()">Terapkan Filter</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Results -->
+                    <div class="row">
+                        <div class="col">
+                            <h5>Hasil Pencarian</h5>
+                            <div class="row" id="searchResults">
+                                <!-- Hasil pencarian akan ditampilkan di sini -->
+                                <div class="col-12 text-center py-5">
+                                    <i class="fas fa-film fa-3x mb-3 text-muted"></i>
+                                    <p class="text-muted">Masukkan kata kunci pencarian untuk menemukan film</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Fungsi untuk melakukan pencarian
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.toLowerCase();
+            
+            if (!query.trim()) {
+                alert('Masukkan kata kunci pencarian');
+                return;
+            }
+            
+            // Filter film berdasarkan query
+            const results = movies.filter(movie => 
+                movie.title.toLowerCase().includes(query) ||
+                movie.genre.some(g => g.toLowerCase().includes(query))
+            );
+            
+            // Tampilkan hasil
+            displaySearchResults(results);
+        }
+        
+        // Fungsi untuk menerapkan filter
+        function applyFilters() {
+            const genre = document.getElementById('genreFilter').value;
+            const year = document.getElementById('yearFilter').value;
+            const rating = document.getElementById('ratingFilter').value;
+            
+            // Filter film
+            let results = movies;
+            
+            if (genre) {
+                results = results.filter(movie => movie.genre.includes(genre));
+            }
+            
+            if (year) {
+                results = results.filter(movie => movie.year == year);
+            }
+            
+            if (rating) {
+                const minRating = parseFloat(rating);
+                results = results.filter(movie => movie.rating >= minRating);
+            }
+            
+            // Tampilkan hasil
+            displaySearchResults(results);
+        }
+        
+        // Fungsi untuk menampilkan hasil pencarian
+        function displaySearchResults(results) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                        <p class="text-muted">Tidak ada film yang ditemukan</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Tampilkan hasil dalam grid
+            let html = '';
+            results.forEach(movie => {
+                html += `
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        ${generateMovieCard(movie)}
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+        }
+        
+        // ==================== HALAMAN WATCHLIST ====================
+        function loadWatchlistPage() {
+            const session = getSession();
+            const users = getUsers();
+            const user = users.find(u => u.id === session.userId);
+            const watchlist = user ? user.watchlist : [];
+            
+            // Ambil film dari watchlist
+            const watchlistMovies = movies.filter(movie => watchlist.includes(movie.id));
+            
+            return `
+                <div class="container">
+                    <!-- Back Button -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <button class="back-button">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Header -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h2 class="fw-bold">Watchlist Saya</h2>
+                            <p class="text-muted">Film yang sudah Anda simpan untuk ditonton nanti</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Watchlist Content -->
+                    <div class="row">
+                        ${watchlistMovies.length === 0 ? `
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-bookmark fa-3x mb-3 text-muted"></i>
+                                <p class="text-muted">Watchlist Anda masih kosong</p>
+                                <p class="text-muted">Simpan film untuk ditonton nanti dengan menekan tombol bookmark</p>
+                            </div>
+                        ` : `
+                            ${watchlistMovies.map(movie => `
+                                <div class="col-6 col-md-4 col-lg-3 mb-4">
+                                    ${generateMovieCard(movie)}
+                                </div>
+                            `).join('')}
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==================== HALAMAN HISTORY ====================
+        function loadHistoryPage() {
+            const session = getSession();
+            const users = getUsers();
+            const user = users.find(u => u.id === session.userId);
+            const history = user ? user.history : [];
+            
+            // Ambil film dari history (dibalik urutannya agar yang terbaru muncul pertama)
+            const historyMovies = movies.filter(movie => history.includes(movie.id));
+            
+            return `
+                <div class="container">
+                    <!-- Back Button -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <button class="back-button">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Header -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h2 class="fw-bold">Riwayat Tontonan</h2>
+                            <p class="text-muted">Film yang sudah Anda tonton</p>
+                        </div>
+                    </div>
+                    
+                    <!-- History Content -->
+                    <div class="row">
+                        ${historyMovies.length === 0 ? `
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-history fa-3x mb-3 text-muted"></i>
+                                <p class="text-muted">Riwayat tontonan Anda masih kosong</p>
+                                <p class="text-muted">Mulai menonton film untuk mengisi riwayat</p>
+                            </div>
+                        ` : `
+                            ${historyMovies.map(movie => `
+                                <div class="col-6 col-md-4 col-lg-3 mb-4">
+                                    ${generateMovieCard(movie)}
+                                </div>
+                            `).join('')}
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==================== HALAMAN PROFILE ====================
+        function loadProfilePage() {
+            const session = getSession();
+            const users = getUsers();
+            const user = users.find(u => u.id === session.userId);
+            
+            if (!user) {
+                showLoginModal();
+                return '';
+            }
+            
+            const joinDate = new Date(user.joinDate).toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            return `
+                <div class="container">
+                    <!-- Back Button -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <button class="back-button">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Header -->
+                    <div class="row mb-5">
+                        <div class="col-12 col-md-8 mx-auto">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                                    <i class="fas fa-user fa-3x"></i>
+                                </div>
+                                <h3 class="fw-bold">${user.name}</h3>
+                                <p class="text-muted">${user.email}</p>
+                                <p class="text-muted">Member sejak ${joinDate}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Stats -->
+                    <div class="row mb-5">
+                        <div class="col">
+                            <h5 class="mb-4">Statistik</h5>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="p-3 rounded glass">
+                                        <h3 class="fw-bold">${user.watchlist ? user.watchlist.length : 0}</h3>
+                                        <p class="mb-0">Watchlist</p>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 rounded glass">
+                                        <h3 class="fw-bold">${user.history ? user.history.length : 0}</h3>
+                                        <p class="mb-0">Ditonton</p>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 rounded glass">
+                                        <h3 class="fw-bold">${movies.length}</h3>
+                                        <p class="mb-0">Film Tersedia</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Settings -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <h5 class="mb-4">Pengaturan</h5>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action glass border-0 mb-2" onclick="showEditProfile()">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-user-edit me-3"></i>
+                                            Edit Profil
+                                        </div>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="list-group-item list-group-item-action glass border-0 mb-2" onclick="showChangePassword()">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-key me-3"></i>
+                                            Ubah Password
+                                        </div>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </a>
+                                
+                                <div class="list-group-item glass border-0 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-palette me-3"></i>
+                                            Tema
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="themeSwitch" onchange="toggleTheme()">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item glass border-0 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-bell me-3"></i>
+                                            Notifikasi
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="notifSwitch" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Logout Button -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-grid">
+                                <button class="btn btn-danger btn-lg" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==================== HALAMAN DETAIL FILM ====================
+        function showMovieDetail(movieId) {
+            // Tambahkan film ke history jika user sudah login
+            if (isLoggedIn()) {
+                const session = getSession();
+                const users = getUsers();
+                const userIndex = users.findIndex(u => u.id === session.userId);
+                
+                if (userIndex !== -1) {
+                    // Tambahkan ke history jika belum ada
+                    if (!users[userIndex].history.includes(movieId)) {
+                        users[userIndex].history.push(movieId);
+                        saveUsers(users);
+                    }
+                }
+            }
+            
+            // Set movie detail page dan muat
+            localStorage.setItem('currentMovieId', movieId);
+            loadPage('movie-detail');
+        }
+        
+        function loadMovieDetailPage() {
+            const movieId = parseInt(localStorage.getItem('currentMovieId')) || 1;
+            const movie = movies.find(m => m.id === movieId) || movies[0];
+            
+            // Cek apakah film ada di watchlist user
+            let isInWatchlist = false;
+            if (isLoggedIn()) {
+                const session = getSession();
+                const users = getUsers();
+                const user = users.find(u => u.id === session.userId);
+                isInWatchlist = user && user.watchlist.includes(movieId);
+            }
+            
+            return `
+                <div class="container">
+                    <!-- Back Button -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <button class="back-button">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Movie Detail -->
+                    <div class="row mb-5">
+                        <div class="col-12 col-md-4 mb-4 mb-md-0">
+                            <img src="${movie.poster}" alt="${movie.title}" class="img-fluid rounded" style="max-height: 500px;">
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <h1 class="fw-bold mb-3">${movie.title} (${movie.year})</h1>
+                            
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-warning text-dark px-3 py-1 rounded me-3">
+                                    <i class="fas fa-star me-1"></i> ${formatRating(movie.rating)}
+                                </div>
+                                <div class="me-3">${movie.duration}</div>
+                                <div>
+                                    ${movie.genre.map(g => `<span class="badge bg-primary me-1">${g}</span>`).join('')}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="mb-2">Sinopsis</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-3 mb-4">
+                                <button class="btn btn-primary btn-lg" onclick="playMovie(${movieId})">
+                                    <i class="fas fa-play me-2"></i> Putar Sekarang
+                                </button>
+                                
+                                <button class="btn ${isInWatchlist ? 'btn-success' : 'btn-outline-primary'} btn-lg" id="watchlistBtn" onclick="toggleWatchlist(${movieId})">
+                                    <i class="fas ${isInWatchlist ? 'fa-check' : 'fa-bookmark'} me-2"></i> 
+                                    ${isInWatchlist ? 'Di Watchlist' : 'Simpan ke Watchlist'}
+                                </button>
+                                
+                                <button class="btn btn-outline-primary btn-lg">
+                                    <i class="fas fa-share me-2"></i> Bagikan
+                                </button>
+                            </div>
+                            
+                            <div>
+                                <h5 class="mb-3">Detail Film</h5>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td style="width: 30%"><strong>Director</strong></td>
+                                        <td>John Director</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cast</strong></td>
+                                        <td>John Doe, Jane Smith, Michael Johnson</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Release Date</strong></td>
+                                        <td>${movie.year}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Language</strong></td>
+                                        <td>English</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Similar Movies -->
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="mb-3">Film Serupa</h4>
+                            <div class="horizontal-scroll">
+                                ${movies
+                                    .filter(m => m.id !== movieId && m.genre.some(g => movie.genre.includes(g)))
+                                    .slice(0, 6)
+                                    .map(m => generateMovieCard(m)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Video Player (tersembunyi) -->
+                    <div class="modal fade" id="videoPlayerModal" tabindex="-1">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content bg-dark">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title text-white">${movie.title}</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-0">
+                                    <div class="video-player-container">
+                                        <video class="video-player" id="moviePlayer" controls>
+                                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                        <div class="video-controls">
+                                            <!-- Controls akan ditambahkan di sini -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Fungsi untuk memutar film
+        function playMovie(movieId) {
+            const videoModal = new bootstrap.Modal(document.getElementById('videoPlayerModal'));
+            videoModal.show();
+            
+            // Mulai pemutaran video
+            const videoPlayer = document.getElementById('moviePlayer');
+            if (videoPlayer) {
+                videoPlayer.play();
+                
+                // Implementasi double-tap untuk skip
+                let lastTap = 0;
+                videoPlayer.addEventListener('touchend', function(event) {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTap;
+                    
+                    if (tapLength < 300 && tapLength > 0) {
+                        // Double tap detected
+                        const rect = videoPlayer.getBoundingClientRect();
+                        const tapX = event.changedTouches[0].clientX - rect.left;
+                        
+                        // Jika tap di sisi kanan, maju 10 detik
+                        // Jika tap di sisi kiri, mundur 10 detik
+                        if (tapX < rect.width / 2) {
+                            videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - 10);
+                        } else {
+                            videoPlayer.currentTime = Math.min(videoPlayer.duration, videoPlayer.currentTime + 10);
+                        }
+                    }
+                    
+                    lastTap = currentTime;
+                });
+            }
+        }
+        
+        // Fungsi untuk toggle watchlist
+        function toggleWatchlist(movieId) {
+            if (!isLoggedIn()) {
+                showLoginModal();
+                return;
+            }
+            
+            const session = getSession();
+            const users = getUsers();
+            const userIndex = users.findIndex(u => u.id === session.userId);
+            
+            if (userIndex === -1) return;
+            
+            const watchlist = users[userIndex].watchlist;
+            const isInWatchlist = watchlist.includes(movieId);
+            
+            if (isInWatchlist) {
+                // Hapus dari watchlist
+                users[userIndex].watchlist = watchlist.filter(id => id !== movieId);
+            } else {
+                // Tambah ke watchlist
+                users[userIndex].watchlist.push(movieId);
+            }
+            
+            saveUsers(users);
+            
+            // Update tombol
+            const watchlistBtn = document.getElementById('watchlistBtn');
+            if (watchlistBtn) {
+                if (isInWatchlist) {
+                    watchlistBtn.className = 'btn btn-outline-primary btn-lg';
+                    watchlistBtn.innerHTML = '<i class="fas fa-bookmark me-2"></i> Simpan ke Watchlist';
+                } else {
+                    watchlistBtn.className = 'btn btn-success btn-lg';
+                    watchlistBtn.innerHTML = '<i class="fas fa-check me-2"></i> Di Watchlist';
+                }
+            }
+        }
+        
+        // ==================== FUNGSI EDIT PROFILE ====================
+        function showEditProfile() {
+            const session = getSession();
+            const users = getUsers();
+            const user = users.find(u => u.id === session.userId);
+            
+            if (!user) return;
+            
+            // Buat modal edit profile
+            const modalHTML = `
+                <div class="modal fade" id="editProfileModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content glass border-0">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">Edit Profil</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editProfileForm">
+                                    <div class="mb-3">
+                                        <label for="editName" class="form-label">Nama Lengkap</label>
+                                        <input type="text" class="form-control" id="editName" value="${user.name}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="editEmail" value="${user.email}" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Tambahkan modal ke body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Tampilkan modal
+            const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+            editProfileModal.show();
+            
+            // Tambahkan event listener untuk form
+            document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newName = document.getElementById('editName').value;
+                const newEmail = document.getElementById('editEmail').value;
+                
+                // Validasi email
+                if (!newEmail.includes('@')) {
+                    alert('Email tidak valid');
+                    return;
+                }
+                
+                // Update user data
+                const updatedUsers = users.map(u => {
+                    if (u.id === user.id) {
+                        return {
+                            ...u,
+                            name: newName,
+                            email: newEmail
+                        };
+                    }
+                    return u;
+                });
+                
+                saveUsers(updatedUsers);
+                
+                // Update session
+                const updatedSession = {
+                    ...session,
+                    name: newName,
+                    email: newEmail
+                };
+                saveSession(updatedSession);
+                
+                // Tutup modal
+                editProfileModal.hide();
+                
+                // Hapus modal dari DOM
+                document.getElementById('editProfileModal').remove();
+                
+                // Reload halaman profile
+                loadPage('profile');
+                
+                alert('Profil berhasil diperbarui!');
+            });
+            
+            // Hapus modal dari DOM saat ditutup
+            document.getElementById('editProfileModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+        }
+        
+        // ==================== FUNGSI CHANGE PASSWORD ====================
+        function showChangePassword() {
+            // Buat modal change password
+            const modalHTML = `
+                <div class="modal fade" id="changePasswordModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content glass border-0">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">Ubah Password</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="changePasswordForm">
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">Password Saat Ini</label>
+                                        <input type="password" class="form-control" id="currentPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">Password Baru</label>
+                                        <input type="password" class="form-control" id="newPassword" minlength="6" required>
+                                        <div class="form-text">Password minimal 6 karakter</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmNewPassword" class="form-label">Konfirmasi Password Baru</label>
+                                        <input type="password" class="form-control" id="confirmNewPassword" required>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Ubah Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Tambahkan modal ke body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Tampilkan modal
+            const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            changePasswordModal.show();
+            
+            // Tambahkan event listener untuk form
+            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+                
+                // Validasi
+                if (newPassword !== confirmNewPassword) {
+                    alert('Password baru tidak cocok');
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    alert('Password baru minimal 6 karakter');
+                    return;
+                }
+                
+                const session = getSession();
+                const users = getUsers();
+                const userIndex = users.findIndex(u => u.id === session.userId);
+                
+                if (userIndex === -1) {
+                    alert('User tidak ditemukan');
+                    return;
+                }
+                
+                // Cek password saat ini
+                if (users[userIndex].password !== simpleHash(currentPassword)) {
+                    alert('Password saat ini salah');
+                    return;
+                }
+                
+                // Update password
+                users[userIndex].password = simpleHash(newPassword);
+                saveUsers(users);
+                
+                // Tutup modal
+                changePasswordModal.hide();
+                
+                // Hapus modal dari DOM
+                document.getElementById('changePasswordModal').remove();
+                
+                alert('Password berhasil diubah!');
+            });
+            
+            // Hapus modal dari DOM saat ditutup
+            document.getElementById('changePasswordModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+        }
+        
+        // ==================== EVENT LISTENERS ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi aplikasi
+            initUsers();
+            initModals();
+            loadTheme();
+            
+            // Event listener untuk tema toggle
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // Event listener untuk form login
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+                
+                // Validasi email
+                if (!email.includes('@')) {
+                    alert('Email tidak valid');
+                    return;
+                }
+                
+                // Cari user
+                const users = getUsers();
+                const user = users.find(u => u.email === email);
+                
+                if (!user) {
+                    alert('Email tidak terdaftar');
+                    return;
+                }
+                
+                // Cek password
+                if (user.password !== simpleHash(password)) {
+                    alert('Password salah');
+                    return;
+                }
+                
+                // Login berhasil
+                saveSession(user);
+                
+                if (rememberMe) {
+                    localStorage.setItem('tontoon_remember', 'true');
+                }
+                
+                // Tutup modal
+                loginModal.hide();
+                
+                // Load halaman home
+                loadPage('home');
+                
+                alert('Login berhasil! Selamat datang ' + user.name);
+            });
+            
+            // Event listener untuk form register
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                
+                // Validasi
+                if (!name.trim()) {
+                    alert('Nama tidak boleh kosong');
+                    return;
+                }
+                
+                if (!email.includes('@')) {
+                    alert('Email tidak valid');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('Password minimal 6 karakter');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('Password tidak cocok');
+                    return;
+                }
+                
+                // Cek apakah email sudah terdaftar
+                const users = getUsers();
+                const existingUser = users.find(u => u.email === email);
+                
+                if (existingUser) {
+                    alert('Email sudah terdaftar');
+                    return;
+                }
+                
+                // Buat user baru
+                const newUser = {
+                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                    name: name,
+                    email: email,
+                    password: simpleHash(password),
+                    joinDate: new Date().toISOString(),
+                    watchlist: [],
+                    history: [],
+                    preferences: {
+                        theme: "dark",
+                        autoPlay: true,
+                        quality: "720p"
+                    }
+                };
+                
+                // Tambahkan user
+                users.push(newUser);
+                saveUsers(users);
+                
+                // Login otomatis
+                saveSession(newUser);
+                
+                // Tutup modal
+                registerModal.hide();
+                
+                // Load halaman home
+                loadPage('home');
+                
+                alert('Registrasi berhasil! Selamat datang di TONTOON');
+            });
+            
+            // Event listener untuk form forgot password
+            document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('forgotEmail').value;
+                
+                // Cek apakah email terdaftar
+                const users = getUsers();
+                const user = users.find(u => u.email === email);
+                
+                if (!user) {
+                    alert('Email tidak terdaftar');
+                    return;
+                }
+                
+                // Simulasi pengiriman email reset password
+                alert('Link reset password telah dikirim ke email ' + email);
+                
+                // Tutup modal
+                forgotPasswordModal.hide();
+                showLogin();
+            });
+            
+            // Cek apakah user sudah login
+            if (isLoggedIn()) {
+                // Auto load home page
+                loadPage('home');
+            } else {
+                // Tampilkan modal login
+                setTimeout(() => {
+                    showLoginModal();
+                }, 500);
+            }
+            
+            // Implementasi pull-to-refresh
+            let touchStartY = 0;
+            document.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                const touchEndY = e.changedTouches[0].clientY;
+                const diff = touchStartY - touchEndY;
+                
+                // Jika user menarik ke bawah cukup jauh dari atas halaman
+                if (diff < -100 && window.scrollY === 0) {
+                    // Reload halaman
+                    loadPage(currentPage, false);
+                }
+            });
+            
+            // Push Notifications Simulation
+            if ('Notification' in window && Notification.permission === 'default') {
+                setTimeout(() => {
+                    Notification.requestPermission();
+                }, 3000);
+            }
+            
+            // Simulasi notifikasi film baru setiap 30 detik (untuk demo)
+            setInterval(() => {
+                if (isLoggedIn() && Notification.permission === 'granted' && currentPage === 'home') {
+                    const randomMovie = movies[Math.floor(Math.random() * movies.length)];
+                    new Notification('TONTOON - Film Baru!', {
+                        body: `${randomMovie.title} tersedia untuk ditonton!`,
+                        icon: 'https://via.placeholder.com/128/7A1CAC/FFFFFF?text=T'
+                    });
+                }
+            }, 30000);
+        });
+        
+        // ==================== SERVICE WORKER ====================
+        // Service Worker code untuk PWA
+        const serviceWorkerCode = `
+            self.addEventListener('install', event => {
+                event.waitUntil(
+                    caches.open('tontoon-v1').then(cache => {
+                        return cache.addAll([
+                            '/',
+                            '/index.html',
+                            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css',
+                            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                            'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap',
+                            'https://via.placeholder.com/300x450/AD49E1/FFFFFF?text=Avengers'
+                        ]);
+                    })
+                );
+            });
+            
+            self.addEventListener('fetch', event => {
+                event.respondWith(
+                    caches.match(event.request).then(response => {
+                        return response || fetch(event.request);
+                    })
+                );
+            });
+            
+            self.addEventListener('activate', event => {
+                event.waitUntil(
+                    caches.keys().then(cacheNames => {
+                        return Promise.all(
+                            cacheNames.filter(cacheName => cacheName !== 'tontoon-v1')
+                                .map(cacheName => caches.delete(cacheName))
+                        );
+                    })
+                );
+            });
+        `;
+        
+        // Buat service worker secara dinamis
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob([serviceWorkerCode], { type: 'application/javascript' });
+            const swURL = URL.createObjectURL(blob);
+            
+            navigator.serviceWorker.register(swURL)
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
+    </script>
+</body>
+</html>
