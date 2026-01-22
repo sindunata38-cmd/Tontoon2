@@ -1,0 +1,46 @@
+{
+  "id": "./",
+  "name": "TONTOON",
+  "short_name": "TONTOON",
+  "description": "Aplikasi PWA responsif streaming film.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2E073F",
+  "theme_color": "#2E073F",
+  "orientation": "portrait",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "assets/logotontoon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logotontoon.png",
+
+
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+ 
+  
+  "shortcuts": [
+    {
+      "name": "Buka Beranda",
+      "short_name": "Home",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "assets/logotontoon.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}
