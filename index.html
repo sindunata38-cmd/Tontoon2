@@ -656,31 +656,7 @@
             });
         }
         
-        // Web App Manifest
-        const manifest = {
-            "name": "TONTOON",
-            "short_name": "TONTOON",
-            "description": "Aplikasi streaming film terlengkap dan terbaru",
-            "start_url": "/",
-            "display": "standalone",
-            "background_color": "#2E073F",
-            "theme_color": "#7A1CAC",
-            "icons": [
-                {
-                    "src": "https://via.placeholder.com/192x192/7A1CAC/FFFFFF?text=T",
-                    "sizes": "192x192",
-                    "type": "image/png"
-                },
-                {
-                    "src": "https://via.placeholder.com/512x512/7A1CAC/FFFFFF?text=T",
-                    "sizes": "512x512",
-                    "type": "image/png"
-                }
-            ]
-        };
         
-        // Set manifest
-        document.getElementById('app-manifest').setAttribute('href', 'data:application/json,' + encodeURIComponent(JSON.stringify(manifest)));
         
         // ==================== SISTEM AUTHENTIKASI ====================
         // Hash password sederhana
